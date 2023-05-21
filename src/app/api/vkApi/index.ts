@@ -1,0 +1,1 @@
+export { VkApiService } from "./services";

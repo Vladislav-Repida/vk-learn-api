@@ -1,0 +1,1 @@
+export { mapUsersFromGetFriendsMethod } from "./mapUsers";
