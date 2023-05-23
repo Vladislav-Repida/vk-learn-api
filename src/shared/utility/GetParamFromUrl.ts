@@ -3,7 +3,7 @@
  * @param key Ключ
  * @param url URL
  */
-export const GetParamFromUrl = (key: string, url: string = location.hash) => {
+export const GetParamFromUrl = (key: string, url: string) => {
   const matches = url.match(new RegExp(key + "=([^&]*)"));
   return matches ? matches[1] : null;
 };

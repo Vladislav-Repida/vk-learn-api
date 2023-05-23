@@ -1,10 +1,14 @@
+import { CollectUrl } from "@/shared/utility";
 // @ts-ignore
 import jsonp from "simple-jsonp-promise";
-import { CollectUrl } from "./CollectUrl";
 
 declare function jsonp(url: string): Promise<any>;
 
-type VkFetchMethod = "secure.checkToken" | "friends.get";
+type VkFetchMethod =
+  | "secure.checkToken"
+  | "friends.get"
+  | "wall.get"
+  | "users.get";
 type VkFetchRequest = {
   access_token?: string;
 };

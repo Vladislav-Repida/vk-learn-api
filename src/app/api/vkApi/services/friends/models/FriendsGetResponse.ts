@@ -10,6 +10,7 @@ export default class FriendsGetResponse {
     title: string;
   };
   bdate?: string;
+  status?: string;
 
   constructor(obj: Partial<FriendsGetResponse>) {
     Object.assign(this, obj);

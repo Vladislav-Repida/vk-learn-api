@@ -1,1 +1,1 @@
-export type VkScopepeType = "friends";
+export type VkScopepeType = "friends" | "wall";

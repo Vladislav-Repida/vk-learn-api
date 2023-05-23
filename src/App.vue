@@ -1,43 +1,42 @@
 <template>
-  {{ isAuth }}
-  <br />
-  {{ tokenAuth }}
-  <br />
-  <button @click="onAuth" v-if="!isAuth">Авторизоваться</button>
-  <div v-if="isAuth">
-    <button @click="GetFriends">Получить друзей</button>
-    <user-list v-if="friends" :users="friends" />
-  </div>
+  <base-page-container>
+    <base-section title="Текущий пользователь">
+      <base-user-info
+        :name="`${user.firstName} ${user.lastName}`"
+        :photo="user.photoRegular"
+      >
+        {{ user.bdate }}
+      </base-user-info>
+    </base-section>
+    <base-section v-if="!isAuth" title="Авторизация" :init-is-open="true">
+      <auth-block />
+    </base-section>
+    <base-section v-if="isAuth" title="Друзья" :init-is-open="true">
+      <base-button @click="GetFriends">Получить друзей</base-button>
+      <friends-table class="friends-table" />
+    </base-section>
+  </base-page-container>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { useUserStore } from "./app/stores/userStore";
-import { useApiStore } from "./app/stores/apiStore";
 import { useAppStore } from "./app/stores/appStore";
-import { onMounted } from "vue";
 
-import { BaseAvatar } from "@/shared/ui/base-avatar";
-import { BaseUserInfo } from "@/shared/ui/base-user-info";
+import { FriendsTable } from "./widgets/friends-table";
 
-import { UserList } from "./shared/ui/user-list";
+import { AuthBlock } from "@/widgets/auth-block";
+import { BaseSection } from "@/shared/ui/base-section";
+import { BasePageContainer } from "@/shared/ui/base-page-container";
+
+import { BaseButton } from "@/shared/ui/base-button";
+import { BaseUserInfo } from "./shared/ui/base-user-info";
 
 const userStore = useUserStore();
-const { isAuth, tokenAuth } = storeToRefs(userStore);
+const { isAuth, user } = storeToRefs(userStore);
 
 const appStore = useAppStore();
-
 const { GetFriends } = appStore;
-const { friends } = storeToRefs(appStore);
-
-const onAuth = () => {
-  const api = useApiStore().api;
-  // console.log(api);
-  api.AuthService.Auth();
-};
-onMounted(() => {
-  onAuth();
-});
 </script>
 
 <style lang="less"></style>

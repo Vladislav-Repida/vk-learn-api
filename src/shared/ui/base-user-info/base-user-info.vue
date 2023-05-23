@@ -1,6 +1,6 @@
 <template>
   <div class="base-user-info">
-    <base-avatar :photo="photo" />
+    <base-avatar :photo="photo" class="base-user-info__avatar" />
     <div class="base-user-info__content">
       <div class="base-user-info__header">
         <span class="base-user-info__name" v-if="name">{{ name }}</span>
@@ -25,6 +25,10 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   gap: 10px;
+
+  &__avatar {
+    flex-shrink: 0;
+  }
 
   &__header {
     display: flex;

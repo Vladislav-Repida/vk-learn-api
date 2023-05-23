@@ -15,9 +15,11 @@ export default class UserModel {
   /** Фото */
   photoBold: string;
   /** Название страны */
-  countryName: string;
+  countryName?: string;
   /** Дата рождения */
-  bdate: string;
+  bdate?: string;
+  /** Статус */
+  status?: string;
 
   constructor(obj?: Partial<UserModel>) {
     Object.assign(this, obj);

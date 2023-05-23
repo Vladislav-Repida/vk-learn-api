@@ -1,0 +1,1 @@
+export { FriendsTable } from "./ui";

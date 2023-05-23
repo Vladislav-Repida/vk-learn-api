@@ -1,56 +1,40 @@
-import { VkScopepeType } from "../types";
-import VkAuthService from "./VkAuthService";
 import { VkFriendsService } from "./friends";
-
-type VkServiceParams = {
-  /** ID приложения */
-  AppId: number;
-  /** Доступы */
-  Scopes: VkScopepeType[];
-  /** Сервисный ключ */
-  ServiceKey: string;
-  /** Коллбек успешной авторизации */
-  callbackAuth: (token: string) => void;
-};
+import { VkSecureService } from "./secure";
+import { VkUserService } from "./users";
+import VkUsersService from "./users/VkUsersService";
+import { VkWallService } from "./wall";
 
 export default class VkApiService {
-  /** ID приложения */
-  private AppId: number;
-  /** Доступы */
-  private Scopes: string[];
-  /** Сервисный ключ */
-  private ServiceKey: string;
-  /** Коллбек успешной авторизации */
-  private callbackAuth: (token: string) => void;
+  /** Сервисный токен доступа */
+  ServiceToken: string;
 
-  /** Сервис аутентификации */
-  AuthService: VkAuthService;
+  /** Сервис для работы с административными методами */
+  SecureService?: VkSecureService;
+
   /** Cервис для работы с друзьями */
   FriendsService?: VkFriendsService;
+  /** Cервис для работы со стеной */
+  WallService?: VkWallService;
+  /** Сервис для работы с пользователями */
+  UsersService?: VkUserService;
 
-  /**
-   * Инициализируем сервисы в которых необходим токен
-   * @param token Токен
-   */
-  initServicesWithToken = (token: string) => {
+  /** Инициализируем сервисы с токеном */
+  InitServicesWithToken(token: string) {
     // Инициализируем сервис для работы с друзьями
     this.FriendsService = new VkFriendsService(token);
-    // Вызываем коллбек успешной авторизации и передаем токен
-    this.callbackAuth(token);
-  };
+    // Инициализируем сервис для работы со стеной
+    this.WallService = new VkWallService(token);
+    // Сервис для работы с пользователями
+    this.UsersService = new VkUsersService(token);
+  }
 
-  init = () => {
-    // Инициализируем сервис аутентификации
-    this.AuthService = new VkAuthService({
-      AppId: this.AppId,
-      Scopes: this.Scopes,
-      ServiceKey: this.ServiceKey,
-      callbackAuth: this.initServicesWithToken,
-    });
-  };
+  /** Инициализируем сервисы без токена */
+  InitServicesWithoutToken() {
+    this.SecureService = new VkSecureService(this.ServiceToken);
+  }
 
-  constructor(obj?: VkServiceParams) {
-    Object.assign(this, obj);
-    this.init();
+  constructor(ServiceToken: string) {
+    this.ServiceToken = ServiceToken;
+    this.InitServicesWithoutToken();
   }
 }

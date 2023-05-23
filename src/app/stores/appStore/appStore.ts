@@ -41,6 +41,7 @@ export const useAppStore = defineStore("appStore", () => {
         "photo_100",
         "country",
         "bdate",
+        "status",
       ],
     });
     friends.value = mapUsersFromGetFriendsMethod(friendApi);
