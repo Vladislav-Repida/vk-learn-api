@@ -5,7 +5,7 @@ export default class VkUsersService {
   private AccessToken: string;
 
   async Get(request?: UsersGetRequest) {
-    const response = await VkFetch("users.get", {
+    const response = (await VkFetch("users.get", {
       ...request,
       access_token: this.AccessToken,
       fields: [
@@ -16,11 +16,9 @@ export default class VkUsersService {
         "photo_100",
         "photo_200_orig",
       ],
-    });
+    })) as Array<any>;
 
-    return new UsersGetResponse({
-      ...response[0],
-    });
+    return response.map((value) => new UsersGetResponse({ ...value }));
   }
 
   constructor(AccessToken: string) {

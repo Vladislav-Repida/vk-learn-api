@@ -1,0 +1,1 @@
+export { ModalCreatePost } from "./ui";

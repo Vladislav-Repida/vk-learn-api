@@ -1,5 +1,16 @@
 import { VkFetch } from "../../utility";
-import { WallGetRequest, WallGetResponse } from "./models";
+import {
+  WallAddLikeRequest,
+  WallAddLikeResponse,
+  WallDeleteLikeRequest,
+  WallDeleteLikeResponse,
+  WallGetCommentsRequset,
+  WallGetCommentsResponse,
+  WallGetRequest,
+  WallGetResponse,
+  WallPostRequest,
+  WallPostResponse,
+} from "./models";
 
 export default class VkWallService {
   private AccessToken: string;
@@ -7,12 +18,75 @@ export default class VkWallService {
   async Get(request: WallGetRequest) {
     const response: Array<WallGetResponse> = (
       await VkFetch(
-        "friends.get",
-        Object.assign({ access_token: this.AccessToken }, request)
+        "wall.get",
+        Object.assign(
+          {
+            access_token: this.AccessToken,
+          },
+          request
+        )
       )
     ).items;
 
     return response.map((item) => new WallGetResponse({ ...item }));
+  }
+
+  async AddLike(request: WallAddLikeRequest) {
+    const response: WallAddLikeResponse = await VkFetch(
+      "wall.addLike",
+      Object.assign(
+        {
+          access_token: this.AccessToken,
+        },
+        request
+      )
+    );
+
+    return new WallAddLikeResponse({ ...response });
+  }
+
+  async DeleteLike(request: WallDeleteLikeRequest) {
+    const response: WallDeleteLikeResponse = await VkFetch(
+      "wall.deleteLike",
+      Object.assign(
+        {
+          access_token: this.AccessToken,
+        },
+        request
+      )
+    );
+
+    return new WallDeleteLikeResponse({ ...response });
+  }
+
+  async Post(request: WallPostRequest) {
+    const response: WallPostResponse = await VkFetch(
+      "wall.post",
+      Object.assign(
+        {
+          access_token: this.AccessToken,
+        },
+        request
+      )
+    );
+
+    return new WallPostResponse({ ...response });
+  }
+
+  async GetComments(request: WallGetCommentsRequset) {
+    const response: Array<WallGetCommentsResponse> = (
+      await VkFetch(
+        "wall.getComments",
+        Object.assign(
+          {
+            access_token: this.AccessToken,
+          },
+          request
+        )
+      )
+    ).items;
+
+    return response.map((value) => new WallGetCommentsResponse({ ...value }));
   }
 
   constructor(AccessToken: string) {

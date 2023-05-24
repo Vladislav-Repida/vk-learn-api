@@ -8,6 +8,10 @@ type VkFetchMethod =
   | "secure.checkToken"
   | "friends.get"
   | "wall.get"
+  | "wall.addLike"
+  | "wall.deleteLike"
+  | "wall.post"
+  | "wall.getComments"
   | "users.get";
 type VkFetchRequest = {
   access_token?: string;

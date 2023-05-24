@@ -5,7 +5,7 @@ import { useUserStore } from "../userStore";
 import { ref } from "vue";
 import { CollectUrl } from "@/shared/utility";
 import { SecureCheckTokenRequest } from "@/app/api/vkApi/services/secure/models";
-import { mapUserFromUsersGetMethod } from "@/app/mappers/mapUsers";
+import { mapUsersFromUsersGetMethod } from "@/app/mappers";
 
 export const useApiStore = defineStore("apiStore", () => {
   /** VK API */
@@ -29,8 +29,7 @@ export const useApiStore = defineStore("apiStore", () => {
       redirect_uri: "https://oauth.vk.com/blank.html",
       scope: scopes.join(","),
       response_type: "token",
-      v: "5.49",
-      revoke: 1,
+      v: "5.131",
     });
     window.open(url);
   };
@@ -46,9 +45,9 @@ export const useApiStore = defineStore("apiStore", () => {
       api.value.InitServicesWithToken(token);
       userStore.SetIsAuth(true);
       userStore.SetTokenAuth(token);
-      const user = mapUserFromUsersGetMethod(
+      const user = mapUsersFromUsersGetMethod(
         await api.value.UsersService.Get()
-      );
+      )[0];
       userStore.SetUser(user);
     }
 

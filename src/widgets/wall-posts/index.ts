@@ -1,0 +1,1 @@
+export { WallPosts } from "./ui";

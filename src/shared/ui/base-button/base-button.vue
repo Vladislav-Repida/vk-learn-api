@@ -16,5 +16,6 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  outline: none;
 }
 </style>

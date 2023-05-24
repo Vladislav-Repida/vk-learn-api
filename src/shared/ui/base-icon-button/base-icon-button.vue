@@ -1,5 +1,5 @@
 <template>
-  <button class="base-icon-button">
+  <button class="base-icon-button" :style="{width, height}">
     <span :class="icon" />
   </button>
 </template>
@@ -7,6 +7,8 @@
 <script lang="ts" setup>
 const props = defineProps<{
   icon: string;
+  width?: string;
+  height?: string;
 }>();
 </script>
 

@@ -1,2 +1,10 @@
 export { default as WallGetRequest } from "./WallGetRequest";
 export { default as WallGetResponse } from "./WallGetResponse";
+export { default as WallAddLikeRequest } from "./WallAddLikeRequest";
+export { default as WallAddLikeResponse } from "./WallAddLikeResponse";
+export { default as WallDeleteLikeRequest } from "./WallDeleteLikeRequest";
+export { default as WallDeleteLikeResponse } from "./WallAddLikeResponse";
+export { default as WallPostRequest } from "./WallPostRequest";
+export { default as WallPostResponse } from "./WallPostResponse";
+export { default as WallGetCommentsRequset } from "./WallGetCommentsRequset";
+export { default as WallGetCommentsResponse } from "./WallGetCommentsResponse";
