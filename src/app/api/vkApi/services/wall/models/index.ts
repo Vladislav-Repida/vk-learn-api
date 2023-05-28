@@ -8,3 +8,5 @@ export { default as WallPostRequest } from "./WallPostRequest";
 export { default as WallPostResponse } from "./WallPostResponse";
 export { default as WallGetCommentsRequset } from "./WallGetCommentsRequset";
 export { default as WallGetCommentsResponse } from "./WallGetCommentsResponse";
+export { default as WallCreateCommentRequest } from "./WallCreateCommentRequest";
+export { default as WallCreateCommentResponse } from "./WallCreateCommentResponse";

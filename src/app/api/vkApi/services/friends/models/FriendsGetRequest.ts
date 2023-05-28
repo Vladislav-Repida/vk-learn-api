@@ -1,6 +1,4 @@
-import { BaseRequest } from "@/app/api/vkApi/models";
-
-export default class FriendsGetRequest extends BaseRequest {
+export default class FriendsGetRequest {
   user_id?: number;
   order?: "hints" | "random" | "name";
   fields: Array<
@@ -29,7 +27,6 @@ export default class FriendsGetRequest extends BaseRequest {
   name_case?: "nom" | "gen" | "dat" | "acc" | "ins" | "abl";
 
   constructor(obj?: Partial<FriendsGetRequest>) {
-    super(obj);
     Object.assign(this, obj);
   }
 }

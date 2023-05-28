@@ -1,1 +1,0 @@
-export { VkScopepeType } from "./VkScopeType";

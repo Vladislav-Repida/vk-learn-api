@@ -1,12 +1,17 @@
 <template>
   <base-page-container>
     <base-section title="Текущий пользователь" v-if="isAuth && user">
-      <base-user-info
-        :name="`${user.firstName} ${user.lastName}`"
-        :photo="user.photoRegular"
-      >
-        {{ user.bdate }}
-      </base-user-info>
+      <base-flex-row>
+        <base-user-info
+          :name="`${user.firstName} ${user.lastName}`"
+          :photo="user.photoRegular"
+        >
+          {{ user.bdate }}
+          <br />
+          <span v-if="user.status">Статус: {{ user.status }}</span>
+        </base-user-info>
+        <change-status />
+      </base-flex-row>
     </base-section>
     <base-section v-if="!isAuth" title="Авторизация" :init-is-open="true">
       <auth-block />
@@ -47,6 +52,7 @@ import { WallPosts } from "@/widgets/wall-posts";
 import {BaseFlexRow }from "@/shared/ui/base-flex-row";
 
 import {ModalCreatePost} from "@/features/modal-create-post";
+import { ChangeStatus } from "./features/change-status";
 import { ref } from "vue";
 
 const isOpenModalCreatePost = ref(false);

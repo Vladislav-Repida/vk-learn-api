@@ -6,11 +6,13 @@ import { ref } from "vue";
 import { CollectUrl } from "@/shared/utility";
 import { SecureCheckTokenRequest } from "@/app/api/vkApi/services/secure/models";
 import { mapUsersFromUsersGetMethod } from "@/app/mappers";
+import { useAppStore } from "../appStore";
 
 export const useApiStore = defineStore("apiStore", () => {
   /** VK API */
   const api = ref<VkApiService>();
-  const scopes = ["wall", "friends"];
+  /** Доступы для VK api */
+  const scopes = ["wall", "friends", "status"];
 
   /**
    * Создаем апи
@@ -22,7 +24,9 @@ export const useApiStore = defineStore("apiStore", () => {
     api.value = new VkApiService(SERVICE_KEY);
   };
 
+  /** Открываем окно авторизации */
   const OpenAuthWindow = () => {
+    /** URL авторизации (получения токена) */
     const url = CollectUrl("https://oauth.vk.com/authorize", {
       client_id: APP_ID,
       display: "page",
@@ -31,23 +35,34 @@ export const useApiStore = defineStore("apiStore", () => {
       response_type: "token",
       v: "5.131",
     });
+    /** Открываем URL */
     window.open(url);
   };
 
+  /** Авторизовываемся с помощью токена */
   const Auth = async (token: string) => {
+    // Проверяем токен на валидность
     const { isSuccess } = await api.value.SecureService.CheckToken(
       new SecureCheckTokenRequest({
         token,
       })
     );
+    // Если токен валидный
     if (isSuccess) {
-      const userStore = useUserStore();
+      // Инициализируем сервисы в которых необходим токен авторизации пользователя
       api.value.InitServicesWithToken(token);
+
+      const userStore = useUserStore();
+      // Устанавливаем состояние авторизации
       userStore.SetIsAuth(true);
+      // Устанавливаем токен авторизации
       userStore.SetTokenAuth(token);
+
+      // Получаем информацию о текущем пользователе
       const user = mapUsersFromUsersGetMethod(
         await api.value.UsersService.Get()
       )[0];
+      // Устанавливаем текущего пользователя
       userStore.SetUser(user);
     }
 

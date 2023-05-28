@@ -1,5 +1,5 @@
 <template>
-  <div class="base-avatar">
+  <div :class="['base-avatar', {'is-small': isSmall}]">
     <div class="base-avatar__image" :style="style" v-if="photo" />
   </div>
 </template>
@@ -10,6 +10,8 @@ import { CSSProperties, computed } from "vue";
 const props = defineProps<{
   /** Фото для аватарки */
   photo?: string;
+
+  isSmall?: boolean;
 }>();
 
 const style = computed<CSSProperties>(() => {
@@ -29,6 +31,11 @@ const style = computed<CSSProperties>(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &.is-small{
+    width: 24px;
+    height: 24px;
+  }
 
   &__image {
     width: 100%;

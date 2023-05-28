@@ -1,6 +1,4 @@
-import { APP_ID } from "@/app/config";
 import { UserModel } from "@/app/mappers/models";
-import { CollectUrl } from "@/shared/utility";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -10,18 +8,18 @@ export const useUserStore = defineStore("userStore", () => {
   /** Токен авторизации текущего клиента (если он авторизован) */
   const tokenAuth = ref<string>();
 
+  /** Текущий пользователь */
   const user = ref<UserModel>();
 
+  /** Устанавливаем состояние авторизации */
   const SetIsAuth = (value: boolean) => (isAuth.value = value);
-
+  /** Устанавливаем токен авторизации */
   const SetTokenAuth = (token: string) => (tokenAuth.value = token);
-
+  /** Устанавливаем текущего пользователя */
   const SetUser = (_user: UserModel) => (user.value = _user);
 
   return {
-    /** Авторизован ли текущий клиент */
     isAuth,
-    /** Токен авторизации текущего клиента (если он авторизован) */
     tokenAuth,
     user,
     SetUser,

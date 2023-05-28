@@ -2,6 +2,8 @@ import { VkFetch } from "../../utility";
 import {
   WallAddLikeRequest,
   WallAddLikeResponse,
+  WallCreateCommentRequest,
+  WallCreateCommentResponse,
   WallDeleteLikeRequest,
   WallDeleteLikeResponse,
   WallGetCommentsRequset,
@@ -87,6 +89,20 @@ export default class VkWallService {
     ).items;
 
     return response.map((value) => new WallGetCommentsResponse({ ...value }));
+  }
+
+  async CreateComment(request: WallCreateCommentRequest) {
+    const response: WallCreateCommentResponse = await VkFetch(
+      "wall.createComment",
+      Object.assign(
+        {
+          access_token: this.AccessToken,
+        },
+        request
+      )
+    );
+
+    return new WallCreateCommentResponse({ ...response });
   }
 
   constructor(AccessToken: string) {

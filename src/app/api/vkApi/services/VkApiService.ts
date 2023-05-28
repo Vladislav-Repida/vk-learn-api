@@ -1,5 +1,6 @@
 import { VkFriendsService } from "./friends";
 import { VkSecureService } from "./secure";
+import { VkStatusService } from "./status";
 import { VkUserService } from "./users";
 import VkUsersService from "./users/VkUsersService";
 import { VkWallService } from "./wall";
@@ -17,6 +18,8 @@ export default class VkApiService {
   WallService?: VkWallService;
   /** Сервис для работы с пользователями */
   UsersService?: VkUserService;
+  /** Сервис для работы со статусами пользователя */
+  StatusService?: VkStatusService;
 
   /** Инициализируем сервисы с токеном */
   InitServicesWithToken(token: string) {
@@ -24,8 +27,10 @@ export default class VkApiService {
     this.FriendsService = new VkFriendsService(token);
     // Инициализируем сервис для работы со стеной
     this.WallService = new VkWallService(token);
-    // Сервис для работы с пользователями
+    // Инициализируем сервис для работы с пользователями
     this.UsersService = new VkUsersService(token);
+    // Инициализируем сервис для работы со статусами пользователя
+    this.StatusService = new VkStatusService(token);
   }
 
   /** Инициализируем сервисы без токена */

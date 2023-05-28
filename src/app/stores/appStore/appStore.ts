@@ -1,7 +1,6 @@
-import { PostModel, UserModel } from "@/app/mappers/models";
-import { defineStore } from "pinia";
 import { ref } from "vue";
-import { useApiStore } from "../apiStore";
+import { defineStore, storeToRefs } from "pinia";
+import { PostModel, UserModel } from "@/app/mappers/models";
 import {
   mapComments,
   mapPosts,
@@ -10,20 +9,31 @@ import {
 } from "@/app/mappers";
 import {
   WallAddLikeRequest,
+  WallCreateCommentRequest,
   WallDeleteLikeRequest,
   WallGetCommentsRequset,
   WallGetRequest,
   WallPostRequest,
 } from "@/app/api/vkApi/services/wall/models";
 import { UsersGetRequest } from "@/app/api/vkApi/services/users/models";
-import { userInfo } from "os";
+import { StatusSetRequest } from "@/app/api/vkApi/services/status/models";
+
+import { useApiStore } from "../apiStore";
+import { useUserStore } from "../userStore";
 
 export const useAppStore = defineStore("appStore", () => {
+  /** Стек пользователей к которые мы получали с API */
+  const users = ref(new Array<UserModel>());
+  /** Друзья текущего пользователя */
   const friends = ref<Array<UserModel>>();
+  /** Посты текущего пользователя */
   const posts = ref<Array<PostModel>>();
 
+  /** Получаем друзей текущего пользователя */
   const GetFriends = async () => {
+    // API
     const api = useApiStore().api;
+    // Друзья (модели API)
     const friendApi = await api.FriendsService.GetCurrenUserFriends({
       fields: [
         "nickname",
@@ -35,15 +45,19 @@ export const useAppStore = defineStore("appStore", () => {
         "status",
       ],
     });
+    // Конвертируем модели API в локальные модели
     friends.value = mapUsersFromGetFriendsMethod(friendApi);
   };
 
   /** Получаем посты со стены текущего пользователя */
   const GetPosts = async () => {
+    // API
     const api = useApiStore().api;
+    // Посты (модели API)
     const postsApi = await api.WallService.Get(new WallGetRequest());
+    // Сконвертированные API модели в локальные модели
     const _posts = await mapPosts(postsApi);
-    window.console.log(_posts);
+
     posts.value = _posts;
     return _posts;
   };
@@ -53,7 +67,14 @@ export const useAppStore = defineStore("appStore", () => {
    * @param userId Идентификатор пользователя
    */
   const GetUser = async (userId: number) => {
+    // Находим пользователя в хранилище стора
+    const findUser = users.value.find((user) => user.id === userId);
+    // Если такой пользователь найден, возвращаем его без запроса к API
+    if (findUser) return findUser;
+
     const api = useApiStore().api;
+
+    // Получаем пользователя
     const [user] = mapUsersFromUsersGetMethod(
       await api.UsersService.Get(
         new UsersGetRequest({
@@ -62,9 +83,17 @@ export const useAppStore = defineStore("appStore", () => {
       )
     );
 
+    // Добавляем пользователя в общий стек
+    users.value.push(user);
+
     return user;
   };
 
+  /**
+   * Ставим лайк на пост
+   * @param postId ID поста
+   * @returns Количество лайков на посте
+   */
   const AddLike = async (postId: number) => {
     const api = useApiStore().api;
     const { likes } = await api.WallService.AddLike(
@@ -80,6 +109,11 @@ export const useAppStore = defineStore("appStore", () => {
     return likes;
   };
 
+  /**
+   * Удаляем лайк с поста
+   * @param postId ID поста
+   * @returns
+   */
   const DeleteLike = async (postId: number) => {
     const api = useApiStore().api;
     const { likes } = await api.WallService.DeleteLike(
@@ -94,6 +128,11 @@ export const useAppStore = defineStore("appStore", () => {
     return likes;
   };
 
+  /**
+   * Постим пост
+   * @param message Сообщение поста
+   * @returns ID созданного поста
+   */
   const Post = async (message: string) => {
     const api = useApiStore().api;
     const { post_id } = await api.WallService.Post(
@@ -106,11 +145,15 @@ export const useAppStore = defineStore("appStore", () => {
 
     if (post_id !== undefined) {
       GetPosts();
+      return post_id;
     }
-
-    return post_id;
   };
 
+  /**
+   * Получаем комментарии поста
+   * @param postId ID поста
+   * @returns Массив комментариев
+   */
   const GetComments = async (postId: number) => {
     const api = useApiStore().api;
     const commentsApi = await api.WallService.GetComments(
@@ -121,6 +164,52 @@ export const useAppStore = defineStore("appStore", () => {
     return mapComments(commentsApi);
   };
 
+  /**
+   * Создаем комментарий на посте
+   * @param postId ID поста
+   * @param message Сообщение комментария
+   * @returns
+   */
+  const CreateComment = async (postId: number, message: string) => {
+    const api = useApiStore().api;
+    const commentId = (
+      await api.WallService.CreateComment(
+        new WallCreateCommentRequest({
+          post_id: postId,
+          message,
+        })
+      )
+    ).comment_id;
+
+    if (commentId !== undefined) {
+      GetPosts();
+      return commentId;
+    }
+  };
+
+  /**
+   * Устанавливаем статус на странице
+   * @param status Строка нового статуса
+   * @returns
+   */
+  const SetStatus = async (status: string) => {
+    const api = useApiStore().api;
+    const { isSuccess } = await api.StatusService.Set(
+      new StatusSetRequest({
+        text: status,
+      })
+    );
+
+    // Если запрос успешен обновляем данные о пользователе
+    if (isSuccess) {
+      const userStore = useUserStore();
+      const { user } = storeToRefs(userStore);
+      user.value.status = status;
+    }
+
+    return isSuccess;
+  };
+
   return {
     GetFriends,
     GetPosts,
@@ -129,6 +218,8 @@ export const useAppStore = defineStore("appStore", () => {
     DeleteLike,
     Post,
     GetComments,
+    CreateComment,
+    SetStatus,
     posts,
     friends,
   };

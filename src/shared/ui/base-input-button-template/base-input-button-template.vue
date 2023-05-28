@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
-  maxWidth: string;
+  maxWidth?: string;
 }>();
 </script>
 
@@ -20,5 +20,9 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   gap: 10px;
+
+  &__input{
+    width: 100%;
+  }
 }
 </style>
